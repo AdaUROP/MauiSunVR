@@ -23,7 +23,6 @@ public class SunUpdate : MonoBehaviour {
 				if (c.g > 0 && d >= interval) {
 					c.g--;
 					d = 0;
-					print ("horseshit");
 				}
 				group.GetComponent<Renderer> ().material.color = c;
 				d++;
@@ -31,7 +30,7 @@ public class SunUpdate : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision c) {
+	void OnTriggerEnter(Collider c) {
 		if (c.gameObject.tag == "Throwable") {
 			collided = true;
 		}
