@@ -43,13 +43,13 @@ public class throwScript : MonoBehaviour {
             var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
             if (origin != null)
             {
-                rb.velocity = origin.TransformVector(device.velocity * 10);
-                rb.angularVelocity = origin.TransformVector(device.angularVelocity * 10);
+                rb.velocity = origin.TransformVector(device.velocity * 5);
+                rb.angularVelocity = origin.TransformVector(device.angularVelocity * 5);
             }
             else
             {
-                rb.velocity = device.velocity * 10;
-                rb.angularVelocity = device.angularVelocity * 10;
+                rb.velocity = device.velocity * 5;
+                rb.angularVelocity = device.angularVelocity * 5;
             }
             go.BroadcastMessage("startArc");
             rb.maxAngularVelocity = rb.angularVelocity.magnitude;
