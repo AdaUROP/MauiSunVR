@@ -4,7 +4,7 @@ using System.Collections;
 public class SunUpdate : MonoBehaviour {
 
 	public bool collided = false;
-	int interval = 20;
+	int interval = 200;
 	int d = 0;
 
 	// Use this for initialization
@@ -19,13 +19,12 @@ public class SunUpdate : MonoBehaviour {
 			SkinnedMeshRenderer sunSmile = group.GetComponent<SkinnedMeshRenderer> ();
 			if (sunSmile.GetBlendShapeWeight (0) <= 100) {
 				sunSmile.SetBlendShapeWeight (0, sunSmile.GetBlendShapeWeight (0) + 2f);
-				Color c = group.GetComponent<Renderer> ().material.color;
-				if (c.g > 0 && d >= interval) {
-					c.g--;
-					d = 0;
+				Color c = group.GetComponent<Renderer> ().material.color, destColor = group.GetComponent<Renderer> ().material.color;
+				destColor.g /= 2;
+				if (c.g > 0 && d <= interval) {
+					Color.Lerp (c, destColor, d / interval);
+					d++;
 				}
-				group.GetComponent<Renderer> ().material.color = c;
-				d++;
 			}
 		}
 	}
@@ -34,6 +33,7 @@ public class SunUpdate : MonoBehaviour {
     {
         if (c.gameObject.tag == "throwable")
         {
+			d = 0;
             collided = true;
             Rigidbody rb = c.GetComponent<Rigidbody>();
             rb.isKinematic = true;

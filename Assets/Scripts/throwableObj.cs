@@ -5,6 +5,7 @@ public class throwableObj : MonoBehaviour {
 
     public bool grow = false;
     public float scale, timer;
+    public bool grabbed = false;
 
     Collider col;
     bool active = false;
@@ -68,6 +69,12 @@ public class throwableObj : MonoBehaviour {
         {
             float complete = timerC / timer;
             gameObject.transform.localScale = Vector3.Lerp(startScale, newScale, complete);
+            /*
+             * foreach(Transform t in transform)
+            {
+                t.localScale = Vector3.Lerp(startScale, newScale, complete);
+            }
+            */
             timerC += Time.deltaTime;
         }
         if(timerC > timer)
@@ -82,6 +89,11 @@ public class throwableObj : MonoBehaviour {
     {
         grow = false;
         Debug.Log("stop!");
+    }
+
+    public void setGrabbed(bool val)
+    {
+        grabbed = val;
     }
 
 }
