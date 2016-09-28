@@ -8,9 +8,11 @@ public class eatMe : MonoBehaviour {
     public Material mat1, mat2, mat3;
     Renderer rend;
     int stage = 0;
+    GameObject scriptB;
 	// Use this for initialization
 	void Start ()
     {
+        scriptB = GameObject.Find("ScriptBox");
         rend = GetComponent<Renderer>();
     }
 	
@@ -54,6 +56,8 @@ public class eatMe : MonoBehaviour {
 
     public void finish()
     {
+        gameObject.SendMessage("dropMe");
+        scriptB.SendMessage("emitCloud", gameObject.transform);
         Destroy(gameObject);
     }
 }

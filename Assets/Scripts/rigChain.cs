@@ -5,18 +5,25 @@ using System.Collections;
 public class rigChain : MonoBehaviour {
     //attach this script to the root joint in the hierarchy
     public float sphereRadius, chainSize, prefabX, prefabY, prefabZ, x, y, z;
-    public GameObject prefab, locator;
+    public GameObject prefab, locator, root;
     Rigidbody connectRB;
     // Use this for initialization
-    void Start () {
-        //traverse(gameObject);
+    void Start ()
+    {
+        Debug.Log("Start");
         Renderer pMesh = prefab.GetComponent<Renderer>();
+        /*
         prefabX = pMesh.bounds.size.x;
         prefabY = pMesh.bounds.size.y;
         prefabZ = pMesh.bounds.size.z;
-        makeChain();
+        */
+        //makeChain();
+        traverse(gameObject);
+
+        
+        root.transform.parent = prefab.transform;
         Debug.Break();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -53,6 +60,7 @@ public class rigChain : MonoBehaviour {
     //of a given object no longer being used
     void traverse(GameObject obj)
     {
+        //Debug.Log("Traverse");
         GameObject first = obj;
         Rigidbody firstRB = obj.GetComponent<Rigidbody>();
         foreach (Transform t in first.transform)
@@ -60,17 +68,25 @@ public class rigChain : MonoBehaviour {
             GameObject second = t.gameObject;
             
             second.AddComponent<Rigidbody>();
+            
             Rigidbody secondRB = second.GetComponent<Rigidbody>();
-            //secondRB.constraints = RigidbodyConstraints.FreezeRotationY;
-            secondRB.drag = 1;
-            secondRB.mass = 5;
+            secondRB.constraints = RigidbodyConstraints.FreezeRotationY;
             second.AddComponent<SphereCollider>();
             SphereCollider col = second.GetComponent<SphereCollider>();
             col.radius = sphereRadius;
+
+            second.AddComponent<SpringJoint>();
+            SpringJoint sj = second.GetComponent<SpringJoint>();
+            sj.connectedBody = firstRB;
+            sj.enablePreprocessing = false;
+            sj.spring = 100000;
+            //secondRB.constraints = RigidbodyConstraints.FreezeRotationY;
+            //secondRB.drag = 1;
+            //secondRB.mass = 5;
             second.AddComponent<HingeJoint>();
             HingeJoint hj = second.GetComponent<HingeJoint>();
             hj.connectedBody = firstRB;
-            //hj.enablePreprocessing = false;
+            hj.enablePreprocessing = false;
             //second.transform.parent = gameObject.transform;
             traverse(t.gameObject);
         }

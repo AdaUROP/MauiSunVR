@@ -11,15 +11,18 @@ public class piggyAI : MonoBehaviour {
     public string sceneTime = "night";
     public GameObject raycaster;
 
+    private Animator anim;
     private Vector3 moveGoal;
     private float distanceToGround = 0;
     private float idleTime;
+    private float timer, timerCheck;
 
 
     // Use this for initialization
     void Start() {
 
         idleTime = Time.time;
+        anim = gameObject.GetComponent<Animator>();
 
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -Vector3.up, out hit))
@@ -32,10 +35,11 @@ public class piggyAI : MonoBehaviour {
             else
             {
                 Debug.Log("Ground was not found, piggy has no ground reference");
+                Debug.Log("Piggy found " + hit.collider.gameObject.name);
             }
 
         }
-            Debug.Log(distanceToGround);
+            //Debug.Log(distanceToGround);
 
     }
 	
@@ -45,7 +49,7 @@ public class piggyAI : MonoBehaviour {
 
         checkState();
        // Debug.Log("Idle time: " + (Time.time - idleTime));
-        Debug.Log("Piggy distance from player: " + Vector3.Distance(player.transform.position, transform.position));
+        //Debug.Log("Piggy distance from player: " + Vector3.Distance(player.transform.position, transform.position));
 
 	}
 
@@ -55,13 +59,15 @@ public class piggyAI : MonoBehaviour {
         switch (piggyState)
         {
             case "idle": //do we want to only follow the player if we are idle? Or even if they are farther away even if sleeping?
-                float distance = Vector3.Distance(player.transform.position, transform.position);
+
+                Vector3 playerDist = new Vector3(player.transform.position.x, raycaster.transform.position.y, player.transform.position.z);
+
+                float distance = Vector3.Distance(playerDist, raycaster.transform.position);
                 if (distance >= separationLimit)
                 {
-                    moveGoal = player.transform.position;
                     move();
                 }
-                else if((Time.time - idleTime) > 20)
+                else if((Time.time - idleTime) > 40)
                 {
                     
                     if(sceneTime == "day")
@@ -99,6 +105,9 @@ public class piggyAI : MonoBehaviour {
                 //as with scared, check if we still are being petted?
                 //else return to idle
                 break;
+            case "moving":
+                //moving or running
+                break;
             default:
                 returnToIdle();
                 break;
@@ -112,8 +121,9 @@ public class piggyAI : MonoBehaviour {
 
     public void move()
     {
-        Debug.Log("Piggy is moving!");
+        //Debug.Log("Piggy is moving!");
         piggyState = "moving";
+        anim.SetBool("idle", false);
         StartCoroutine("moveTo");
     }
 
@@ -170,11 +180,18 @@ public class piggyAI : MonoBehaviour {
     {
         Debug.Log("Piggy is idle!");
         piggyState = "idle";
+        anim.SetBool("idle", true);
         idleTime = Time.time;
     }
 
     IEnumerator moveTo()
-    { 
+    {
+        moveGoal = player.transform.position;
+        Vector3 origPos = gameObject.transform.position;
+        float range = Vector3.Distance(player.transform.position, transform.position);
+        timer = range / speed;
+        timerCheck = 0;
+
 
         while (transform.position != moveGoal && piggyState == "moving")
         {
@@ -182,28 +199,50 @@ public class piggyAI : MonoBehaviour {
             if (Physics.Raycast(transform.position, -Vector3.up, out hit))
             {
                 Debug.DrawLine(transform.position, hit.point);
-                Debug.Log("Found object " + hit.collider.gameObject.tag + " - distance: " + hit.distance);
+                //Debug.Log("Found object " + hit.collider.gameObject.tag + " - distance: " + hit.distance);
                 if (hit.collider.gameObject.tag == "ground")
                 {
                     transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
                 }
                 else
                 {
-                    Debug.Log("piggy did not hit ground!!");
+                    //Debug.Log("piggy did not hit ground!!");
                 }
             }
 
             //rotate piggy
-            var rotation = Quaternion.LookRotation(player.transform.position - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 15);
+            Vector3 displacement = player.transform.position - transform.position;
+            displacement.y = 0;
 
-            transform.position = Vector3.MoveTowards(transform.position, moveGoal, speed * Time.deltaTime);
-           
+            var rotation = Quaternion.LookRotation(displacement);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 2);
 
+            timerCheck += Time.deltaTime;
+            float comp = timerCheck / timer;
+            if(comp > 1 || (Vector3.Distance(player.transform.position, transform.position) < separationLimit/2))
+            {
+                break;
+            }
 
-                yield return new WaitForSeconds(1f);
+            displacement = Vector3.Lerp(origPos, moveGoal, comp);
+            displacement.y = origPos.y;
+            Vector3 check = player.transform.position;
+            check.y = origPos.y;
+
+            if (comp > 1 || Vector3.Distance(check, displacement ) < separationLimit / 2)
+            {
+                break;
+            }
+
+            transform.position = displacement;
+            //transform.position = Vector3.MoveTowards(transform.position, moveGoal, speed * Time.deltaTime);
+
+            yield return new WaitForSeconds(0f);
+            //yield return new WaitForSeconds(0.5f);
+
         }
-        if(piggyState == "move") returnToIdle();
+        if(piggyState == "moving") returnToIdle();
+        
     }
 
     void onColliderEnter(Collision other)

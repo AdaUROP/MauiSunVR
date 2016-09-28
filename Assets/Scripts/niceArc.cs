@@ -8,11 +8,13 @@ public class niceArc : MonoBehaviour {
     bool go;
     float timer = 0.1f;
     Rigidbody rb;
+    throwableObj tScript;
 
 	// Use this for initialization
 	void Start ()
     {
         rb = GetComponent<Rigidbody>();
+        tScript = GetComponent<throwableObj>();
     }
 	
 	
@@ -21,6 +23,11 @@ public class niceArc : MonoBehaviour {
         if(go)
         {
             arc();
+        }
+
+        if(tScript.grow)
+        {
+            go = true;
         }
 	
 	}
@@ -42,7 +49,11 @@ public class niceArc : MonoBehaviour {
 
     public void stopArc()
     {
-        go = false;
+        if (go)
+        {
+            go = false;
+            Debug.Log("StopArc");
+        }
     }
 
     public void halt()

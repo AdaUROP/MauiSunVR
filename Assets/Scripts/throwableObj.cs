@@ -7,17 +7,21 @@ public class throwableObj : MonoBehaviour {
     public float scale, timer;
     public bool grabbed = false;
 
-    Collider col;
+    Collider colli              ;
     bool active = false;
     float timerC;
     Vector3 startScale;
     Vector3 newScale;
+    Rigidbody rb;
+    GameObject scriptB;
     // Use this for initialization
     void Start()
     {
+        scriptB = GameObject.Find("ScriptBox");
         startScale = gameObject.transform.localScale;
         newScale = new Vector3(scale, scale, scale);
-        col = GetComponent<Collider>();
+        colli = GetComponent<Collider>();
+        rb = gameObject.GetComponent<Rigidbody>();
     }
 	
 	// Update is called once per frame
@@ -26,6 +30,10 @@ public class throwableObj : MonoBehaviour {
         if(grow)
         {
             scaleObj();
+        }
+        if(grabbed && rb.isKinematic)
+        {
+            rb.isKinematic = false;
         }
 	
 	}
@@ -46,6 +54,7 @@ public class throwableObj : MonoBehaviour {
         if(col.CompareTag("hand") && !active)
         {
             setReady();
+            colli = null;
         }
 
         if(col.CompareTag("areaLimit") && active)
@@ -55,11 +64,23 @@ public class throwableObj : MonoBehaviour {
         }
     }
 
+    void OnTriggerEnter(Collider col)
+    {
+        if(col.CompareTag("hand"))
+        {
+            colli = col;
+        }
+    }
+
     void OnCollisionEnter(Collision col)
     {
         if(grow)
         {
             grow = false;
+        }
+        if (col.gameObject.CompareTag("ground") || col.gameObject.CompareTag("pig") || col.gameObject.CompareTag("npc"))
+        {
+           scriptB.SendMessage("emitCloudwSound", gameObject.transform);
         }
     }
 
@@ -94,6 +115,14 @@ public class throwableObj : MonoBehaviour {
     public void setGrabbed(bool val)
     {
         grabbed = val;
+    }
+
+    public void dropMe()
+    {
+        if(colli != null)
+        {
+            colli.SendMessage("release");
+        }
     }
 
 }

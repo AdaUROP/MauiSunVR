@@ -25,11 +25,12 @@ public class throwScript : MonoBehaviour {
             
             
             grabObj.transform.position = attachPoint.transform.position;
-            Debug.Log("adding joint1");
+            //Debug.Log("adding joint1");
             joint = grabObj.AddComponent<FixedJoint>();
             joint.connectedBody = attachPoint;
 
             grabObj.SendMessage("disable");
+            grabObj.SendMessage("setGrabbed", true);
             holding = true;
         }
         else if (grabObj != null && holding && device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
@@ -43,8 +44,8 @@ public class throwScript : MonoBehaviour {
             var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
             if (origin != null)
             {
-                rb.velocity = origin.TransformVector(device.velocity * 5);
-                rb.angularVelocity = origin.TransformVector(device.angularVelocity * 5);
+                rb.velocity = origin.TransformVector(device.velocity * 2);
+                rb.angularVelocity = origin.TransformVector(device.angularVelocity * 2);
             }
             else
             {
@@ -54,6 +55,7 @@ public class throwScript : MonoBehaviour {
             go.BroadcastMessage("startArc");
             rb.maxAngularVelocity = rb.angularVelocity.magnitude;
             grabObj.SendMessage("setReady");
+            grabObj.SendMessage("setGrabbed", false);
             holding = false;
             grabObj = null;
         }
@@ -81,6 +83,18 @@ public class throwScript : MonoBehaviour {
             grabObj = null;
         }
         }
+    }
+
+    public void release()
+    {
+        var go = joint.gameObject;
+        var rb = go.GetComponent<Rigidbody>();
+        Object.DestroyImmediate(joint);
+        joint = null;
+        grabObj.SendMessage("setReady");
+        grabObj.SendMessage("setGrabbed", false);
+        holding = false;
+        grabObj = null;
     }
 
     /*
