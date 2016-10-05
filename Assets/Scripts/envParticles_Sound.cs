@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 public class envParticles_Sound : MonoBehaviour {
 
-    public GameObject cloudFX, system2, system3;
-    public AudioClip boop, heavyBoop, softBoop, splash, hit1, hit2, hit3;
-    AudioSource aud;
+    public GameObject cloudFX, system2, system3, audPos;
+    public AudioClip boop, heavyBoop, softBoop, splash, hit1, hit2, hit3, bite;
+    AudioSource aud, audPoint;
     List <AudioClip> clips;
     Random rand;
 	// Use this for initialization
 	void Start () {
+        audPoint = audPos.GetComponent<AudioSource>();
         clips = new List<AudioClip>();
         clips.Add(boop);
         clips.Add(heavyBoop);
@@ -18,6 +19,7 @@ public class envParticles_Sound : MonoBehaviour {
         clips.Add(hit1);
         clips.Add(hit2);
         clips.Add(hit3);
+        clips.Add(bite);
 	
 	}
 	
@@ -48,5 +50,11 @@ public class envParticles_Sound : MonoBehaviour {
     {
         int i = Random.Range(0, 2);
         aud.PlayOneShot(clips[i]);
+    }
+
+    public void playBite(Transform t)
+    {
+        audPos.transform.position = t.position;
+        audPoint.PlayOneShot(clips[6]);
     }
 }

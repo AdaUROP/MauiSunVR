@@ -4,24 +4,31 @@ using System.Collections;
 
 public class rigChain : MonoBehaviour {
     //attach this script to the root joint in the hierarchy
-    public float sphereRadius, chainSize, prefabX, prefabY, prefabZ, x, y, z;
-    public GameObject prefab, locator, root;
+    public float chainSize;
+    public GameObject prefab, locator;
+    public bool helix;
+
+    //ConfigurableJoint cjBase;
+    float prefabX, prefabY, prefabZ;
+    //GameObject root;
     Rigidbody connectRB;
     // Use this for initialization
     void Start ()
     {
+        //first we get the size of our prefab so we can properly place everything
         Debug.Log("Start");
         Renderer pMesh = prefab.GetComponent<Renderer>();
-        /*
+        
         prefabX = pMesh.bounds.size.x;
         prefabY = pMesh.bounds.size.y;
         prefabZ = pMesh.bounds.size.z;
-        */
-        //makeChain();
-        traverse(gameObject);
-
         
-        root.transform.parent = prefab.transform;
+        if(helix)
+        {
+            makeCoil();
+        }
+        else makeChain();
+        //setting a pause when finished so we can inspect it before continuing
         Debug.Break();
     }
 	
@@ -32,63 +39,77 @@ public class rigChain : MonoBehaviour {
 
     void makeChain()
     {
-        
-        for(int i = 0; i < chainSize; i++)
+        GameObject current = null;
+        GameObject first = null;
+        GameObject segment;
+        ConfigurableJoint cjBase;
+        for (int i = 0; i < chainSize; i++)
         {
-            
-            GameObject segment = Instantiate(prefab, locator.transform.position, prefab.transform.rotation) as GameObject;
+            Debug.Log("rope " + i);
+            segment = Instantiate(prefab, locator.transform.position, prefab.transform.rotation) as GameObject;
+            cjBase = segment.AddComponent<ConfigurableJoint>();
 
-            HingeJoint hj = segment.GetComponent<HingeJoint>();
-            
-            hj.axis = new Vector3(0, 0, 1);
-            if(i == 0)
+            cjBase.xMotion = cjBase.yMotion = cjBase.zMotion = ConfigurableJointMotion.Locked;
+            cjBase.angularYMotion = ConfigurableJointMotion.Limited;
+            cjBase.angularXMotion = cjBase.angularZMotion = ConfigurableJointMotion.Free;
+            cjBase.enablePreprocessing = false;
+            cjBase.projectionMode = JointProjectionMode.PositionAndRotation;
+
+            if (current == null)
             {
-                connectRB = segment.GetComponent<Rigidbody>();
-                Destroy(hj);
+                first = segment;
+                current = segment;
+                continue;
+                
             }
-            else
-            {
-                hj.connectedBody = connectRB;
-                connectRB = segment.GetComponent<Rigidbody>();
-            }
-            locator.transform.Translate(prefabX * x * 1.01f, prefabY * y * 1.01f, prefabZ * z * 1.01f);
+
+            cjBase.connectedBody = current.GetComponent<Rigidbody>();
+            locator.transform.position -= new Vector3(0, prefabY, 0);
+            current = segment;
         }
+        cjBase = first.GetComponent<ConfigurableJoint>();
+        Destroy(cjBase);
     }
 
-
-    //old recursive method in order to cycle through all possible children
-    //of a given object no longer being used
-    void traverse(GameObject obj)
+    public void makeCoil()
     {
-        //Debug.Log("Traverse");
-        GameObject first = obj;
-        Rigidbody firstRB = obj.GetComponent<Rigidbody>();
-        foreach (Transform t in first.transform)
-        {
-            GameObject second = t.gameObject;
-            
-            second.AddComponent<Rigidbody>();
-            
-            Rigidbody secondRB = second.GetComponent<Rigidbody>();
-            secondRB.constraints = RigidbodyConstraints.FreezeRotationY;
-            second.AddComponent<SphereCollider>();
-            SphereCollider col = second.GetComponent<SphereCollider>();
-            col.radius = sphereRadius;
+        GameObject current = null;
+        GameObject first = null;
+        GameObject segment;
+        ConfigurableJoint cjBase;
+        float x, y, z;
+        Vector3 pos;
 
-            second.AddComponent<SpringJoint>();
-            SpringJoint sj = second.GetComponent<SpringJoint>();
-            sj.connectedBody = firstRB;
-            sj.enablePreprocessing = false;
-            sj.spring = 100000;
-            //secondRB.constraints = RigidbodyConstraints.FreezeRotationY;
-            //secondRB.drag = 1;
-            //secondRB.mass = 5;
-            second.AddComponent<HingeJoint>();
-            HingeJoint hj = second.GetComponent<HingeJoint>();
-            hj.connectedBody = firstRB;
-            hj.enablePreprocessing = false;
-            //second.transform.parent = gameObject.transform;
-            traverse(t.gameObject);
+        for (int i = 1; i < chainSize+1; i++)
+        {
+            x = Mathf.Cos(i);
+            y = Mathf.Sin(i);
+            z = prefabZ*i;
+            pos = new Vector3(x, y, z); 
+            Debug.Log("rope " + i);
+            segment = Instantiate(prefab, pos, prefab.transform.rotation) as GameObject;
+            cjBase = segment.AddComponent<ConfigurableJoint>();
+
+            cjBase.xMotion = cjBase.yMotion = cjBase.zMotion = ConfigurableJointMotion.Locked;
+            cjBase.angularYMotion = ConfigurableJointMotion.Limited;
+            cjBase.angularXMotion = cjBase.angularZMotion = ConfigurableJointMotion.Free;
+            cjBase.enablePreprocessing = false;
+            cjBase.projectionMode = JointProjectionMode.PositionAndRotation;
+
+            if (current == null)
+            {
+                first = segment;
+                current = segment;
+                continue;
+
+            }
+
+            cjBase.connectedBody = current.GetComponent<Rigidbody>();
+            locator.transform.position = pos;
+            current = segment;
         }
+        cjBase = first.GetComponent<ConfigurableJoint>();
+        Destroy(cjBase);
+
     }
 }

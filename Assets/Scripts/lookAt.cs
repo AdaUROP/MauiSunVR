@@ -3,6 +3,7 @@ using System.Collections;
 
 public class lookAt : MonoBehaviour {
     public Transform target;
+    public bool lateU = false;
 	// Use this for initialization
 	void Start () {
 	
@@ -10,8 +11,17 @@ public class lookAt : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        transform.LookAt(target);
-	
+        if (!lateU)
+        {
+            transform.LookAt(target);
+        }
 	}
+
+    void LateUpdate()
+    {
+        if(lateU)
+        {
+            transform.LookAt(target);
+        }
+    }
 }

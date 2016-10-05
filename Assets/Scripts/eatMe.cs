@@ -22,19 +22,25 @@ public class eatMe : MonoBehaviour {
 	    if(Input.GetKeyUp(KeyCode.B))
         {
             stage++;
-            switch(stage)
-            {
-                case 1: oneBite();
-                    break;
-                case 2: twoBite();
-                    break;
-                case 3: threeBite();
-                    break;
-                case 4: finish();
-                    break;
-            }
+            
         }
-	}
+
+        switch (stage)
+        {
+            case 1:
+                oneBite();
+                break;
+            case 2:
+                twoBite();
+                break;
+            case 3:
+                threeBite();
+                break;
+            case 4:
+                finish();
+                break;
+        }
+    }
 
     public void oneBite()
     {
@@ -59,5 +65,15 @@ public class eatMe : MonoBehaviour {
         gameObject.SendMessage("dropMe");
         scriptB.SendMessage("emitCloud", gameObject.transform);
         Destroy(gameObject);
+    }
+
+    void OnTriggerEnter(Collider col)
+    {
+        if(col.CompareTag("Player") || col.CompareTag("pig"))
+        {
+            stage++;
+            scriptB.SendMessage("playBite", gameObject.transform);
+            
+        }
     }
 }

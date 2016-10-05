@@ -11,11 +11,17 @@ public class piggyAI : MonoBehaviour {
     public string sceneTime = "night";
     public GameObject raycaster;
 
+    public AudioClip[] piggyOinks;
+    public AudioClip piggyHappy;
+    public AudioClip piggyMad;
+    public AudioSource audio;
+
     private Animator anim;
     private Vector3 moveGoal;
     private float distanceToGround = 0;
     private float idleTime;
     private float timer, timerCheck;
+    private int updateCount = 0;
 
 
     // Use this for initialization
@@ -23,6 +29,7 @@ public class piggyAI : MonoBehaviour {
 
         idleTime = Time.time;
         anim = gameObject.GetComponent<Animator>();
+        //audio = gameObject.GetComponent<AudioSource>();
 
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -Vector3.up, out hit))
@@ -48,10 +55,18 @@ public class piggyAI : MonoBehaviour {
         moveGoal = player.transform.position;
 
         checkState();
-       // Debug.Log("Idle time: " + (Time.time - idleTime));
+        // Debug.Log("Idle time: " + (Time.time - idleTime));
         //Debug.Log("Piggy distance from player: " + Vector3.Distance(player.transform.position, transform.position));
+        if (updateCount % 500 == 0 && !audio.isPlaying)
+        {
+            AudioClip clip = piggyOinks[Random.Range(0, piggyOinks.Length - 1)];
+            Debug.Log(updateCount + " we are playing audio clip");
+            audio.clip = clip;
+            audio.Play();
+        }
+        updateCount++;
 
-	}
+    }
 
     void checkState()
     {
@@ -167,6 +182,8 @@ public class piggyAI : MonoBehaviour {
     {
         Debug.Log("Piggy is being petted!");
         // if player is touching pig->run animation
+        audio.clip = piggyHappy;
+        audio.Play();
     }
 
     public void eat()
@@ -241,7 +258,9 @@ public class piggyAI : MonoBehaviour {
             //yield return new WaitForSeconds(0.5f);
 
         }
-        if(piggyState == "moving") returnToIdle();
+        audio.clip = piggyHappy;
+       if(updateCount%2 !=0) audio.Play();
+        if (piggyState == "moving") returnToIdle();
         
     }
 

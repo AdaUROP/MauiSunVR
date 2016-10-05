@@ -5,6 +5,7 @@ public class throwScript : MonoBehaviour {
 
     public GameObject grabObj;
     public Rigidbody attachPoint;
+    public float forceMult;
 
     SteamVR_TrackedObject trackedObj;
     FixedJoint joint;
@@ -32,6 +33,7 @@ public class throwScript : MonoBehaviour {
             grabObj.SendMessage("disable");
             grabObj.SendMessage("setGrabbed", true);
             holding = true;
+            
         }
         else if (grabObj != null && holding && device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
         {
@@ -44,13 +46,30 @@ public class throwScript : MonoBehaviour {
             var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
             if (origin != null)
             {
-                rb.velocity = origin.TransformVector(device.velocity * 2);
-                rb.angularVelocity = origin.TransformVector(device.angularVelocity * 2);
+                if(grabObj.name == "hook")
+                {
+                    rb.velocity = origin.TransformVector(device.velocity * forceMult);
+                    rb.angularVelocity = origin.TransformVector(device.angularVelocity * forceMult);
+                }
+                else
+                {
+                    rb.velocity = origin.TransformVector(device.velocity);
+                    rb.angularVelocity = origin.TransformVector(device.angularVelocity);
+                }
+
             }
             else
             {
-                rb.velocity = device.velocity * 5;
-                rb.angularVelocity = device.angularVelocity * 5;
+                if (grabObj.name == "hook")
+                {
+                    rb.velocity = origin.TransformVector(device.velocity * forceMult);
+                    rb.angularVelocity = origin.TransformVector(device.angularVelocity * forceMult);
+                }
+                else
+                {
+                    rb.velocity = origin.TransformVector(device.velocity);
+                    rb.angularVelocity = origin.TransformVector(device.angularVelocity);
+                }
             }
             go.BroadcastMessage("startArc");
             rb.maxAngularVelocity = rb.angularVelocity.magnitude;
