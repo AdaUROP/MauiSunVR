@@ -5,7 +5,7 @@ public class SunUpdate : MonoBehaviour {
 
 	public bool collided = false, dodge;
     bool dodging = false, forward = false, premature = false, emote = false;
-    int interval = 20, d = 0, timesHit = 0;
+    int interval = 20, d = 0, timesHit = 0, timesDodged = 0;
     Color originalColor;
     public Color targetColor;
     public float timer, dodgeTimer, faceTimer;
@@ -47,41 +47,50 @@ public class SunUpdate : MonoBehaviour {
                 {
                     if (!dodging && !forward)
                     {
+                        print("Ponies");
                         originalRotation = this.transform.parent.rotation;
-                        targetRotation = new Quaternion(originalRotation.x, .5f, originalRotation.z, originalRotation.w);
+                        targetRotation = new Quaternion(originalRotation.x, .72f, originalRotation.z, originalRotation.w);
                         dodging = true;
                         forward = true;
                     }
                     else if (dodging && forward)
                     {
-                        if (dodgeElapsed < dodgeTimer)
+                        print("are");
+                        if (dodgeElapsed < dodgeTimer * (Mathf.Min(timesDodged, 3) / 3 + 1))
                         {
+                            print("not");
                             dodgeElapsed += Time.deltaTime;
-                            this.transform.parent.rotation = Quaternion.Slerp(originalRotation, targetRotation, dodgeElapsed / dodgeTimer);
+                            this.transform.parent.rotation = Quaternion.Slerp(originalRotation, targetRotation, dodgeElapsed / (dodgeTimer * (Mathf.Min(timesDodged, 3) / 3 + 1)));
                         }
                         else
                         {
+                            print("people.");
                             dodgeElapsed = 0;
                             forward = false;
                         }
                     }
-                    else if (dodging && !forward)
+                    else if (dodging && !forward && !premature)
                     {
-                        if (dodgeElapsed < dodgeTimer)
+                        print("Deal with it");
+                        if (dodgeElapsed < dodgeTimer * (Mathf.Min(timesDodged, 3) / 3 + 1))
                         {
+                            print("!");
                             dodgeElapsed += Time.deltaTime;
-                            this.transform.parent.rotation = Quaternion.Slerp(targetRotation, originalRotation, dodgeElapsed / dodgeTimer);
+                            this.transform.parent.rotation = Quaternion.Slerp(targetRotation, originalRotation, dodgeElapsed / (dodgeTimer * (Mathf.Min(timesDodged, 3) / 3 + 1)));
                         }
                         else
                         {
+                            print("NO!");
                             dodgeElapsed = 0;
                             dodging = false;
+                            timesDodged++;
                         }
                     }
                 }
                 else {
                     if (dodging && !premature)
                     {
+                        print("Oopsies...");
                         forward = false;
                         premature = true;
                         dodgeTempTimer = dodgeTimer - dodgeElapsed;
@@ -89,14 +98,18 @@ public class SunUpdate : MonoBehaviour {
                         tempRotation = this.transform.parent.rotation;
                     }
                     else if (dodging && premature) {
+                        print("Meh.");
                         if (dodgeElapsed < dodgeTempTimer)
                         {
+                            print("Clean up!");
                             dodgeElapsed += Time.deltaTime;
                             this.transform.parent.rotation = Quaternion.Slerp(tempRotation, originalRotation, dodgeElapsed / dodgeTempTimer);
                         }
                         else {
+                            print("I mean it!!!");
                             dodging = false;
                             premature = false;
+                            timesDodged++;
                         }
                     }
                 }
