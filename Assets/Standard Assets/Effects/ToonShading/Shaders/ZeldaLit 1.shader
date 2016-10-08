@@ -19,8 +19,11 @@ Shader "Toon/ZeldaLit 1" {
 	}
 
 	SubShader {
-		Tags { "RenderType" = "Overlay"}
+		Tags { "RenderType" = "Opaque"}
+		
+		
 		LOD 200
+
 		
 CGPROGRAM
 

@@ -1,0 +1,123 @@
+fileFormatVersion: 2
+guid: da0ee941d18c61a45b4c8dda7ddbbdc6
+timeCreated: 1475828568
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: hookCollider
+    100002: //RootNode
+    100004: hookCol1_hookCollider
+    100006: hookCollider_hookCol2_polySurface2
+    100008: hookCollider_polySurface2_hookCol3_polySurface4
+    100010: hookCollider_polySurface2_polySurface4_hookCol4_polySurface6
+    100012: hookCollider_polySurface2_polySurface4_polySurface6_hookCol5
+    100014: hookCollider_hookCol2
+    100016: hookCollider_hookCol3
+    100018: hookCollider_hookCol4
+    100020: hookCollider_hookCol5
+    400000: hookCollider
+    400002: //RootNode
+    400004: hookCol1_hookCollider
+    400006: hookCollider_hookCol2_polySurface2
+    400008: hookCollider_polySurface2_hookCol3_polySurface4
+    400010: hookCollider_polySurface2_polySurface4_hookCol4_polySurface6
+    400012: hookCollider_polySurface2_polySurface4_polySurface6_hookCol5
+    400014: hookCollider_hookCol2
+    400016: hookCollider_hookCol3
+    400018: hookCollider_hookCol4
+    400020: hookCollider_hookCol5
+    2300000: hookCollider
+    2300002: hookCol1_hookCollider
+    2300004: hookCollider_hookCol2_polySurface2
+    2300006: hookCollider_polySurface2_hookCol3_polySurface4
+    2300008: hookCollider_polySurface2_polySurface4_hookCol4_polySurface6
+    2300010: hookCollider_polySurface2_polySurface4_polySurface6_hookCol5
+    2300012: hookCollider_hookCol2
+    2300014: hookCollider_hookCol3
+    2300016: hookCollider_hookCol4
+    2300018: hookCollider_hookCol5
+    3300000: hookCollider
+    3300002: hookCol1_hookCollider
+    3300004: hookCollider_hookCol2_polySurface2
+    3300006: hookCollider_polySurface2_hookCol3_polySurface4
+    3300008: hookCollider_polySurface2_polySurface4_hookCol4_polySurface6
+    3300010: hookCollider_polySurface2_polySurface4_polySurface6_hookCol5
+    3300012: hookCollider_hookCol2
+    3300014: hookCollider_hookCol3
+    3300016: hookCollider_hookCol4
+    3300018: hookCollider_hookCol5
+    4300000: hookCollider
+    4300002: hookCol1_hookCollider
+    4300004: hookCollider_hookCol2_polySurface2
+    4300006: hookCollider_polySurface2_hookCol3_polySurface4
+    4300008: hookCollider_polySurface2_polySurface4_hookCol4_polySurface6
+    4300010: hookCollider_polySurface2_polySurface4_polySurface6_hookCol5
+    4300012: hookCollider_hookCol2
+    4300014: hookCollider_hookCol3
+    4300016: hookCollider_hookCol4
+    4300018: hookCollider_hookCol5
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.05
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

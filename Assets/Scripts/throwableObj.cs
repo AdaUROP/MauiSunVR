@@ -4,7 +4,8 @@ using System.Collections;
 public class throwableObj : MonoBehaviour {
 
     public bool grow = false;
-    public float scale, timer;
+    public float scale = 0;
+    public float timer = 0;
     public bool grabbed = false;
 
     Collider colli              ;
@@ -80,7 +81,11 @@ public class throwableObj : MonoBehaviour {
         }
         if (col.gameObject.CompareTag("ground") || col.gameObject.CompareTag("pig") || col.gameObject.CompareTag("npc"))
         {
-           scriptB.SendMessage("emitCloudwSound", gameObject.transform);
+            if(Vector3.Magnitude(rb.velocity) > 2)
+            {
+                scriptB.SendMessage("emitCloudwSound", gameObject.transform);
+            }
+           
         }
     }
 
