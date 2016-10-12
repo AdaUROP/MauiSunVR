@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 
 public class SunUpdate : MonoBehaviour {
 
 	public bool collided = false, dodge;
     bool dodging = false, forward = false, premature = false, emote = false;
-    int interval = 20, d = 0, timesHit = 0, timesDodged = 0;
+    int d = 0, timesHit = 0, timesDodged = 0;
     Color originalColor;
     public Color targetColor;
     public float timer, dodgeTimer, faceTimer;
@@ -17,27 +18,37 @@ public class SunUpdate : MonoBehaviour {
     RaycastHit hit;
     Quaternion originalRotation, targetRotation, tempRotation;
     SunEmotion currentEmotion, targetEmotion;
+	Queue<EmotionParams> eQueue;
 
     // Use this for initialization
     void Start () {
         group = GameObject.Find("sunModel");
         sunSmile = group.GetComponent<SkinnedMeshRenderer>();
         originalColor = group.GetComponent<Renderer>().material.color;
+		eQueue = new Queue<EmotionParams>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if(Input.GetKeyUp(KeyCode.R))
-        {
-            changeEmotion(new SunEmotion(0f, 0f, 0f, 0f, 0f, 0f), .2f);
-        }
+        if (Input.GetKeyUp(KeyCode.R))
+		{
+			EmotionParams[] meh = { new EmotionParams(new SunEmotion(0f, 0f, 0f, 0f, 0f, 0f), .2f) };
+			addEmotionsToQueue(meh);
+		}
 
         if (Input.GetKeyUp(KeyCode.X))
         {
-            changeEmotion(new SunEmotion(75f, 100f, 0f, 50f, 0f, 0f), .1f);
+			EmotionParams[] meh = { new EmotionParams(new SunEmotion(75f, 100f, 0f, 50f, 0f, 0f), .1f) };
+			addEmotionsToQueue(meh);
         }
+
+		if (Input.GetKeyUp(KeyCode.F)){
+			EmotionParams[] meh = { new EmotionParams(SunExpressions.LIPS_FV, .05f), new EmotionParams(SunExpressions.LIPS_AH, .05f), new EmotionParams(SunExpressions.LIPS_DEF, .05f) };
+			addEmotionsToQueue(meh);
+		}
+
         if (dodge)
         {
             if (Physics.SphereCast(group.transform.position, 10, group.transform.forward, out hit, 300))
@@ -134,6 +145,12 @@ public class SunUpdate : MonoBehaviour {
             }
             d++;
         }
+		if (!emote) {
+			if (eQueue.Peek () != null) {
+				EmotionParams e = eQueue.Dequeue ();
+				changeEmotion (e.getE (), e.getTime ());
+			}
+		}
 
         if (emote)
         {
@@ -172,7 +189,7 @@ public class SunUpdate : MonoBehaviour {
     {
         if (c.gameObject.tag == "throwable")
         {
-            
+            //Debug.Break();
             Debug.Log("That's a HIT");
             timesHit++;
             collided = true;
@@ -190,4 +207,10 @@ public class SunUpdate : MonoBehaviour {
         faceElapsed = 0;
         emote = true;
     }
+
+	public void addEmotionsToQueue(EmotionParams[] emos) {
+		for (int e = 0; e < emos.Length; e++) {
+			eQueue.Enqueue (emos[e]);
+		}
+	}
 }
