@@ -7,7 +7,7 @@ Shader "Toon/Lit" {
 
 	SubShader {
 		Tags { "RenderType"="Opaque" }
-		Pass { ZTest Always }
+		//Pass { ZTest Always }
 		LOD 200
 		
 CGPROGRAM

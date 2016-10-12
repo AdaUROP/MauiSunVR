@@ -172,7 +172,7 @@ public class SunUpdate : MonoBehaviour {
     {
         if (c.gameObject.tag == "throwable")
         {
-            //Debug.Break();
+            
             Debug.Log("That's a HIT");
             timesHit++;
             collided = true;

@@ -13,7 +13,7 @@ public class throwableObj : MonoBehaviour {
     float timerC;
     Vector3 startScale;
     Vector3 newScale;
-    Rigidbody rb;
+    public Rigidbody rb;
     GameObject scriptB;
     // Use this for initialization
     void Start()

@@ -19,7 +19,8 @@ Shader "Toon/ZeldaLit 1" {
 	}
 
 	SubShader {
-		Tags { "RenderType" = "Opaque"}
+		Tags { "RenderType" = "Opaque" }
+		Pass{ ZWrite Off }
 		
 		
 		LOD 200
