@@ -17,7 +17,7 @@ public class onTriggerSendMessage : MonoBehaviour {
     {
         if (c.gameObject.tag == "throwable")
         {
-            Debug.Log("That's a HIT");
+            //Debug.Log("That's a HIT");
             SendMessageUpwards("sunHit", c);
         }
     }

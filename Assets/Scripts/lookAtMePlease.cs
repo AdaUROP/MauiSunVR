@@ -27,7 +27,7 @@ public class lookAtMePlease : MonoBehaviour {
             {
                 savePos = you.transform.rotation;
                 startLook = true;
-                Debug.Log("Setting start!");
+                //Debug.Log("Setting start!");
             }
         }
 

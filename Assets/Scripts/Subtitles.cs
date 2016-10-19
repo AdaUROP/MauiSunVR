@@ -31,7 +31,7 @@ public class Subtitles : MonoBehaviour {
 		if (onOff) {
 			if (display) {
 				textMesh.text = this.text;
-				frames--;
+				//frames--;
 				if (frames == 0) { // If audio is playing
 					display = false;
 				}

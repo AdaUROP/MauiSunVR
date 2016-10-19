@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
 
 public class SunUpdate : MonoBehaviour {
 
 	public bool collided = false, dodge;
     bool dodging = false, forward = false, premature = false, emote = false;
-    int d = 0, timesHit = 0, timesDodged = 0;
+    int interval = 20, d = 0, timesHit = 0, timesDodged = 0;
     Color originalColor;
     public Color targetColor;
     public float timer, dodgeTimer, faceTimer;
@@ -18,37 +17,30 @@ public class SunUpdate : MonoBehaviour {
     RaycastHit hit;
     Quaternion originalRotation, targetRotation, tempRotation;
     SunEmotion currentEmotion, targetEmotion;
-	Queue<EmotionParams> eQueue;
+    GameObject scriptBox;
+    public Rigidbody attach;
 
     // Use this for initialization
     void Start () {
         group = GameObject.Find("sunModel");
+        scriptBox = GameObject.Find("ScriptBox");
         sunSmile = group.GetComponent<SkinnedMeshRenderer>();
         originalColor = group.GetComponent<Renderer>().material.color;
-		eQueue = new Queue<EmotionParams>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if (Input.GetKeyUp(KeyCode.R))
-		{
-			EmotionParams[] meh = { new EmotionParams(new SunEmotion(0f, 0f, 0f, 0f, 0f, 0f), .2f) };
-			addEmotionsToQueue(meh);
-		}
+        if(Input.GetKeyUp(KeyCode.R))
+        {
+            changeEmotion(new SunEmotion(0f, 0f, 0f, 0f, 0f, 0f), .2f);
+        }
 
         if (Input.GetKeyUp(KeyCode.X))
         {
-			EmotionParams[] meh = { new EmotionParams(new SunEmotion(75f, 100f, 0f, 50f, 0f, 0f), .1f) };
-			addEmotionsToQueue(meh);
+            changeEmotion(new SunEmotion(75f, 100f, 0f, 50f, 0f, 0f), .1f);
         }
-
-		if (Input.GetKeyUp(KeyCode.F)){
-			EmotionParams[] meh = { new EmotionParams(SunExpressions.LIPS_FV, .05f), new EmotionParams(SunExpressions.LIPS_AH, .05f), new EmotionParams(SunExpressions.LIPS_DEF, .05f) };
-			addEmotionsToQueue(meh);
-		}
-
         if (dodge)
         {
             if (Physics.SphereCast(group.transform.position, 10, group.transform.forward, out hit, 300))
@@ -56,6 +48,7 @@ public class SunUpdate : MonoBehaviour {
                 print("Meh");
                 if (hit.collider.CompareTag("throwable"))
                 {
+
                     if (!dodging && !forward)
                     {
                         print("Ponies");
@@ -130,7 +123,7 @@ public class SunUpdate : MonoBehaviour {
         if (collided)
         {
             GameObject.Find("Subtitles").SendMessage("displayScript", new SubtitleParams("OWWW!!! That hurts!", 90));
-            changeEmotion(new SunEmotion(0f, 100f, 0f, 0f, 0f, 100f), 2.5f);
+            changeEmotion(new SunEmotion(0f, 100f, 0f, 0f, 0f, 100f), .5f);
             if (elapsed <= timer)
             {
                 elapsed += Time.deltaTime;
@@ -145,12 +138,6 @@ public class SunUpdate : MonoBehaviour {
             }
             d++;
         }
-		if (!emote) {
-			if (eQueue.Peek () != null) {
-				EmotionParams e = eQueue.Dequeue ();
-				changeEmotion (e.getE (), e.getTime ());
-			}
-		}
 
         if (emote)
         {
@@ -171,32 +158,61 @@ public class SunUpdate : MonoBehaviour {
         }
     }
 
-    void OnTriggerEnter(Collider c)
-    {
-        if (c.gameObject.tag == "throwable")
-        {
-            Debug.Log("That's a HIT");
-            timesHit++;
-            collided = true;
-            Rigidbody rb = c.GetComponent<Rigidbody>();
-            rb.isKinematic = true;
-            rb.SendMessage("stopGrow");
-            c.gameObject.transform.parent = gameObject.transform;
-        }
-    }
+    //void OnTriggerEnter(Collider c)
+    //{
+    //    if (c.gameObject.tag == "throwable")
+    //    {
+    //        scriptBox.BroadcastMessage("setSpring");
+    //        timesHit++;
+    //        collided = true;
+    //        Rigidbody rb = c.GetComponent<Rigidbody>();
+    //        rb.isKinematic = true;
+    //        rb.SendMessage("stopGrow");
+    //        ConfigurableJoint cj = rb.gameObject.AddComponent<ConfigurableJoint>();
+
+    //        cj.connectedBody = attach;
+
+    //        cj.enablePreprocessing = false;
+    //        cj.projectionMode = JointProjectionMode.PositionAndRotation;
+    //        cj.yMotion = ConfigurableJointMotion.Locked;
+    //        cj.xMotion = ConfigurableJointMotion.Locked;
+    //        cj.zMotion = ConfigurableJointMotion.Locked;
+    //        rb.isKinematic = false;
+    //        rb.useGravity = false;
+    //        //gameObject.transform.parent = rb.gameObject.transform;
+    //        //c.gameObject.transform.parent = gameObject.transform;
+    //    }
+    //}
 
     public void sunHit(Collider c)
     {
         if (c.gameObject.tag == "throwable")
         {
-            //Debug.Break();
-            Debug.Log("That's a HIT");
+            // Debug.Log("That's a HIT");
+
+
             timesHit++;
             collided = true;
+
             Rigidbody rb = c.GetComponent<Rigidbody>();
             rb.isKinematic = true;
-            rb.SendMessage("stopGrow");
-            c.gameObject.transform.parent = gameObject.transform;
+
+            ConfigurableJoint cj = rb.gameObject.AddComponent<ConfigurableJoint>();
+            cj.connectedBody = attach;
+            cj.enablePreprocessing = false;
+            cj.projectionMode = JointProjectionMode.PositionAndRotation;
+            cj.yMotion = cj.zMotion = cj.xMotion = cj.angularYMotion = cj.angularXMotion = cj.angularZMotion = ConfigurableJointMotion.Locked;
+                        
+            rb.isKinematic = false;
+            rb.useGravity = false;
+
+
+            scriptBox.BroadcastMessage("setSpring");
+            scriptBox.BroadcastMessage("fightSong");
+            group.BroadcastMessage("setLaugh", false);
+            //gameObject.transform.parent = rb.gameObject.transform;
+            //c.gameObject.transform.parent = gameObject.transform;
+
         }
     }
 
@@ -207,10 +223,4 @@ public class SunUpdate : MonoBehaviour {
         faceElapsed = 0;
         emote = true;
     }
-
-	public void addEmotionsToQueue(EmotionParams[] emos) {
-		for (int e = 0; e < emos.Length; e++) {
-			eQueue.Enqueue (emos[e]);
-		}
-	}
 }

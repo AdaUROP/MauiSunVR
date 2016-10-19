@@ -15,9 +15,13 @@ public class throwableObj : MonoBehaviour {
     Vector3 newScale;
     public Rigidbody rb;
     GameObject scriptB;
+    bool can = true;
+    AudioSource aud;
+    public AudioClip woosh;
     // Use this for initialization
     void Start()
     {
+        aud = GetComponent<AudioSource>();
         scriptB = GameObject.Find("ScriptBox");
         startScale = gameObject.transform.localScale;
         newScale = new Vector3(scale, scale, scale);
@@ -32,12 +36,13 @@ public class throwableObj : MonoBehaviour {
         {
             scaleObj();
         }
-        if(grabbed && rb.isKinematic)
+        if (grabbed && rb.isKinematic)
         {
             rb.isKinematic = false;
         }
-	
-	}
+
+
+    }
 
     public void setReady()
     {
@@ -46,6 +51,11 @@ public class throwableObj : MonoBehaviour {
     }
     public void disable()
     {
+        //if (rb.isKinematic)
+        //{
+        //    rb.isKinematic = false;
+        //    rb.useGravity = true;
+        //}
         active = false;
         gameObject.tag = "Untagged";
     }
@@ -60,8 +70,12 @@ public class throwableObj : MonoBehaviour {
 
         if(col.CompareTag("areaLimit") && active)
         {
-            grow = true;
-            timerC = 0;
+            if (can)
+            {
+                grow = true;
+                timerC = 0;
+                can = false;
+            }
         }
     }
 
@@ -81,7 +95,7 @@ public class throwableObj : MonoBehaviour {
         }
         if (col.gameObject.CompareTag("ground") || col.gameObject.CompareTag("pig") || col.gameObject.CompareTag("npc"))
         {
-            if(Vector3.Magnitude(rb.velocity) > 2)
+            if(Vector3.Magnitude(rb.velocity) > 4)
             {
                 scriptB.SendMessage("emitCloudwSound", gameObject.transform);
             }
@@ -114,7 +128,7 @@ public class throwableObj : MonoBehaviour {
     public void stopGrow()
     {
         grow = false;
-        Debug.Log("stop!");
+        //Debug.Log("stop!");
     }
 
     public void setGrabbed(bool val)
@@ -127,6 +141,22 @@ public class throwableObj : MonoBehaviour {
         if(colli != null)
         {
             colli.SendMessage("release");
+        }
+    }
+
+    public void setKin(bool val)
+    {
+        //Debug.Log("kinematic");
+        rb.isKinematic = val;
+    }
+
+    public void wooshFX()
+    {
+        aud.PlayOneShot(woosh);
+        if(gameObject.name == "hook")
+        {
+            TrailRenderer tr = GetComponentInChildren<TrailRenderer>();
+            tr.enabled = true;
         }
     }
 

@@ -7,6 +7,7 @@ public class envParticles_Sound : MonoBehaviour {
     public GameObject cloudFX, system2, system3, audPos;
     public AudioClip boop, heavyBoop, softBoop, splash, hit1, hit2, hit3, bite;
     AudioSource aud, audPoint;
+    public AudioSource[] muzakSystem;
     List <AudioClip> clips;
     Random rand;
 	// Use this for initialization
@@ -57,4 +58,25 @@ public class envParticles_Sound : MonoBehaviour {
         audPos.transform.position = t.position;
         audPoint.PlayOneShot(clips[6]);
     }
+
+    public void startSong()
+    {
+        muzakSystem[1].mute = true;
+        muzakSystem[0].mute = false;
+    }
+
+    public void fightSong()
+    {
+        muzakSystem[0].mute = true;
+        muzakSystem[1].mute = false;
+        muzakSystem[1].Play();
+
+    }
+
+    public void endSong()
+    {
+        
+    }
+
+
 }

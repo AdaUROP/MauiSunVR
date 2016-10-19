@@ -7,24 +7,32 @@ public class throwScript : MonoBehaviour {
     public Rigidbody attachPoint;
     public float forceMult;
 
-    SteamVR_TrackedObject trackedObj;
+    public SteamVR_TrackedObject trackedObj;
     FixedJoint joint;
     bool holding = false;
 
     // Use this for initialization
     void Start () {
-        trackedObj = GetComponent<SteamVR_TrackedObject>();
+        //trackedObj = GetComponent<SteamVR_TrackedObject>();
 
     }
 
     void FixedUpdate()
     {
         var device = SteamVR_Controller.Input((int)trackedObj.index);
+        //if(grabObj != null && device.GetPress(SteamVR_Controller.ButtonMask.Grip) && holding)
+        //{
+        //    grabObj.SendMessage("setKin", true);
+        //}
+
 
         if(grabObj != null && device.GetTouchDown(SteamVR_Controller.ButtonMask.Trigger) && !holding)
         {
             
-            
+            if(grabObj.name == "hook")
+            {
+                grabObj.SendMessage("setKin", false);
+            }
             grabObj.transform.position = attachPoint.transform.position;
             //Debug.Log("adding joint1");
             joint = grabObj.AddComponent<FixedJoint>();
@@ -33,6 +41,7 @@ public class throwScript : MonoBehaviour {
             grabObj.SendMessage("disable");
             grabObj.SendMessage("setGrabbed", true);
             holding = true;
+            
             
         }
         else if (grabObj != null && holding && device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
@@ -57,6 +66,11 @@ public class throwScript : MonoBehaviour {
                     rb.angularVelocity = origin.TransformVector(device.angularVelocity);
                 }
 
+                if(Vector3.Magnitude(rb.velocity) > 4)
+                {
+                    rb.BroadcastMessage("wooshFX");
+                }
+
             }
             else
             {
@@ -69,6 +83,11 @@ public class throwScript : MonoBehaviour {
                 {
                     rb.velocity = origin.TransformVector(device.velocity);
                     rb.angularVelocity = origin.TransformVector(device.angularVelocity);
+                }
+
+                if (Vector3.Magnitude(rb.velocity) > 4)
+                {
+                    rb.BroadcastMessage("wooshFX");
                 }
             }
             go.BroadcastMessage("startArc");
@@ -84,10 +103,10 @@ public class throwScript : MonoBehaviour {
     {
         if (grabObj == null)
         {
-            Debug.Log("Trig Hit");
+            //Debug.Log("Trig Hit");
             if (col.CompareTag("throwable"))
             {
-                Debug.Log("Hit throwable");
+               // Debug.Log("Hit throwable");
                 grabObj = col.gameObject;
             }
         }
@@ -98,7 +117,7 @@ public class throwScript : MonoBehaviour {
         { 
         if(col.CompareTag("throwable") && !holding)
         {
-            Debug.Log("Exit throwable");
+            //Debug.Log("Exit throwable");
             grabObj = null;
         }
         }
